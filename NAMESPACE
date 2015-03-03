@@ -1,0 +1,2 @@
+export(plot_netassoc_network, makenetwork)
+import(igraph)
