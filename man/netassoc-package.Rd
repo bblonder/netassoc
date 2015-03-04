@@ -8,15 +8,6 @@ Inference of species assocations from co-occurrence data
 \description{
 Infers species associations from local and regional-scale co-occurrence data (species x site matrices). The resulting network can be analyzed using functions from the \code{igraph} network package.
 }
-\details{
-\tabular{ll}{
-Package: \tab netassoc\cr
-Type: \tab Package\cr
-Version: \tab 0.4.1\cr
-Date: \tab 2015-01-29\cr
-License: \tab What license is it under?\cr
-}
-}
 \author{
 Benjamin Blonder, Naia Morueta-Holme
 

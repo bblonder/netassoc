@@ -108,7 +108,7 @@ generate_nul_resample <- function(nul, obs, verbose=TRUE)
   return(nul_resample)
 }  
 
-makenetwork <- function(obs, nul, method='pearson', kappa=2, numnulls=1000, debug=FALSE,verbose=TRUE)
+makenetwork <- function(obs, nul, method='pearson', kappa=2, numnulls=1000, plot=FALSE,verbose=TRUE)
 {	  
   obs <- as.matrix(obs,rownames.force=TRUE)
   nul <- as.matrix(nul,rownames.force=TRUE)
@@ -124,7 +124,7 @@ makenetwork <- function(obs, nul, method='pearson', kappa=2, numnulls=1000, debu
   #obs <- obs[-problemspecies,]
   #nul <- nul[-problemspecies,]
 
-  if (debug==TRUE)
+  if (plot==TRUE)
   {
     par(mfrow=c(2,4)) 
     par(cex.lab=0.5)
@@ -132,7 +132,7 @@ makenetwork <- function(obs, nul, method='pearson', kappa=2, numnulls=1000, debu
     par(mar=c(0.5,2,2,0.5))
   }
   
-  if (debug==TRUE)
+  if (plot==TRUE)
   {
     plot_netassoc_matrix(obs, colors=colorRampPalette(c('white','green'))(51),onesided=TRUE,main="Observed sp x site")
 
@@ -144,7 +144,7 @@ makenetwork <- function(obs, nul, method='pearson', kappa=2, numnulls=1000, debu
   nulls <- replicate(numnulls, generate_nul_resample(nul, obs, verbose=verbose))
   if (verbose==TRUE) { cat('...done.\n') }
   
-  if (debug==TRUE)
+  if (plot==TRUE)
   {
     plot_netassoc_matrix(nulls[,,sample(numnulls, 1)], colors=colorRampPalette(c('white','black'))(51),onesided=TRUE,main="Example null resample sp x site")
   }	
@@ -192,7 +192,7 @@ makenetwork <- function(obs, nul, method='pearson', kappa=2, numnulls=1000, debu
   finalmatrix <- (fm_obs - fm_nul_mean) / fm_nul_sd
   if (verbose==TRUE) { cat('...done.\n') }
   
-  if (debug==TRUE)
+  if (plot==TRUE)
   {
     plot_netassoc_matrix(fm_obs, xlab='Species',ylab='Species',colors=colorRampPalette(c('red','white','blue'))(51),main="Observed co-occurrence score for sp x sp")
     plot_netassoc_matrix(fm_nul_mean, xlab='Species',ylab='Species',colors=colorRampPalette(c('red','white','blue'))(51),main="Null mean co-occurrence score for sp x sp")
@@ -209,7 +209,7 @@ makenetwork <- function(obs, nul, method='pearson', kappa=2, numnulls=1000, debu
   finalmatrix_trimmed[is.infinite(finalmatrix_trimmed)] <- 0
   if (verbose==TRUE) { cat('...done.\n') }
 
-  if (debug==TRUE)
+  if (plot==TRUE)
   {
     plot_netassoc_matrix(finalmatrix_trimmed, xlab='Species',ylab='Species',colorRampPalette(c('red','white','blue'))(51),main="S.E.S. co-occurrence score for sp x sp")
   }
@@ -219,34 +219,29 @@ makenetwork <- function(obs, nul, method='pearson', kappa=2, numnulls=1000, debu
   network_all <- graph.adjacency(finalmatrix_trimmed,mode='upper',weighted=T)
   if (verbose==TRUE) { cat('...done.\n') }
   
-  if (debug==TRUE)
+  if (plot==TRUE)
   {
     plot_netassoc_network(network_all)
     title('Association network')
   }
   
-  if (debug==TRUE)
+  if (plot==TRUE)
   {
     par(mfrow=c(1,1))
   }
   
-  if (debug==TRUE)
-  {
-    return(list(
-      matrix_spsite_obs=obs,
-      matrix_spsite_null=nul,
-      matrix_spsite_nulls=nulls,
-      matrix_spsp_obs=fm_obs,
-      matrix_spsp_null_mean=fm_nul_mean,
-      matrix_spsp_null_sd=fm_nul_sd,
-      matrix_spsp_ses_all=finalmatrix,
-      matrix_spsp_ses_thresholded=finalmatrix_trimmed,
-      network_all=network_all
-      ))
-  }
-  else
-  {
-    return(network_all)
-  }
+
+  return(list(
+    matrix_spsite_obs=obs,
+    matrix_spsite_null=nul,
+    matrix_spsite_nulls=nulls,
+    matrix_spsp_obs=fm_obs,
+    matrix_spsp_null_mean=fm_nul_mean,
+    matrix_spsp_null_sd=fm_nul_sd,
+    matrix_spsp_ses_all=finalmatrix,
+    matrix_spsp_ses_thresholded=finalmatrix_trimmed,
+    network_all=network_all
+    ))
+
 }
 

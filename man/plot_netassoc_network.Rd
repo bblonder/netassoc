@@ -71,8 +71,8 @@ nsites <- 50
 n <- makenetwork(fia_obs[1:nsp,1:nsites], fia_nul[1:nsp,1:nsites], numnulls=50)
 
 # plot
-plot_netassoc_network(n)
+plot_netassoc_network(n$network_all)
 
 # plot using circular layout
-plot_netassoc_network(n, layout=layout.circle(n))
+plot_netassoc_network(n$network_all, layout=layout.circle(n))
 }

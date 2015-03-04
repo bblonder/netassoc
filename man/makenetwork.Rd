@@ -19,7 +19,7 @@ The resulting network can be analyzed using functions from the \code{igraph} net
 \usage{
 makenetwork(obs, nul, 
   method = "pearson", kappa = 2, numnulls = 1000, 
-  debug = FALSE, verbose = TRUE)
+  plot = FALSE, verbose = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -38,7 +38,7 @@ Threshold value determining the minimum absolute standardized effect size to be 
   \item{numnulls}{
 Number of resamples of the \code{nul} matrix used to assemble null communities. Larger values produce more accurate results.
 }
-  \item{debug}{
+  \item{plot}{
 If \code{TRUE}, plots all intermediate matrices calculated by the algorithm. Can be used to visualize input.
 }
   \item{verbose}{
@@ -49,9 +49,7 @@ If \code{TRUE}, prints status updates and progress bars during calculations.
 Full explanation of the algorithm is provided in the referenced paper.
 }
 \value{
-If \code{debug=FALSE}, an \code{igraph} object representing the association network, with edge weights between species corresponding to thresholded standardized effect sizes.
-
-If \code{debug=TRUE}, a list with the following components:
+A list with the following components:
 \item{\code{matrix_spsite_obs}}{The trimmed \code{obs} matrix}
 \item{\code{matrix_spsite_null}}{The trimmed \code{nul} matrix}
 \item{\code{matrix_spsite_nulls}}{The \code{numnulls} resampled null matrices}
@@ -77,7 +75,7 @@ data(fia)
 # trim input to a few species to pass CRAN time checks
 nsp <- 30
 nsites <- 50
-n <- makenetwork(fia_obs[1:nsp,1:nsites], fia_nul[1:nsp,1:nsites], numnulls=50, debug=TRUE)
+n <- makenetwork(fia_obs[1:nsp,1:nsites], fia_nul[1:nsp,1:nsites], numnulls=50, plot=TRUE)
 
 # extract network
 n$network_all
