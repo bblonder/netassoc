@@ -18,7 +18,7 @@ The resulting network can be analyzed using functions from the \code{igraph} net
 }
 \usage{
 makenetwork(obs, nul, 
-  method = "pearson", kappa = 2, numnulls = 1000, 
+  whichmethod = "pearson", kappa = 2, numnulls = 1000, 
   plot = FALSE, verbose = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -29,7 +29,7 @@ A m x n community matrix describing the abundance of m species at n sites. Repre
   \item{nul}{
 A m x n community matrix describing the abundance of m species at n sites. Represents the regional null expectation data.
 }
-  \item{method}{
+  \item{whichmethod}{
 Method used to calculate co-occurrence score between abundance vectors of species across sites. Can be either \code{'pearson'} or \code{'spearman'}, as per arguments in \code{\link{cor}}
 }
   \item{kappa}{
@@ -68,14 +68,14 @@ Morueta-Holme, N., Blonder, B., et al. in preparation.
 }
 
 \examples{
-# example using New World forest plot data from referenced manuscript
-data(fia)
+# generate random data
+set.seed(1)
+nsp <- 10
+nsi <- 5
+m_obs <- floor(matrix(rgamma(nsp*nsi,shape=5),ncol=nsi,nrow=nsp))
+m_nul <- floor(matrix(rexp(nsp*nsi,rate=0.05),ncol=nsi,nrow=nsp))
 
-# run in debug mode for full output
-# trim input to a few species to pass CRAN time checks
-nsp <- 30
-nsites <- 50
-n <- makenetwork(fia_obs[1:nsp,1:nsites], fia_nul[1:nsp,1:nsites], numnulls=50, plot=TRUE)
+n <- makenetwork(m_obs, m_nul, numnulls=50, plot=TRUE)
 
 # extract network
 n$network_all
