@@ -52,13 +52,14 @@ Full explanation of the algorithm is provided in the referenced paper.
 A list with the following components:
 \item{\code{matrix_spsite_obs}}{The trimmed \code{obs} matrix}
 \item{\code{matrix_spsite_null}}{The trimmed \code{nul} matrix}
-\item{\code{matrix_spsite_nulls}}{The \code{numnulls} resampled null matrices}
 \item{\code{matrix_spsp_obs}}{The observed co-occurrence scores between species}
 \item{\code{matrix_spsp_null_mean}}{The mean null co-occurrence scores between species}
 \item{\code{matrix_spsp_null_sd}}{The s.d. null co-occurrence scores between species}
 \item{\code{matrix_spsp_ses_all}}{The raw standardized effect size co-occurrence scores between species}
 \item{\code{matrix_spsp_ses_thresholded}}{The thresholded standardized effect size co-occurrence scores between species}
 \item{\code{network_all}}{An \code{igraph} object representing the association network}
+\item{\code{network_pos}}{An \code{igraph} object representing an association network including only positive associations}
+\item{\code{network_pos}}{An \code{igraph} object representing an association network including only negative associations}
 }
 \note{
 Warnings may be generated when calculating co-occurrence scores using the \code{cor} function in cases where a pair of species co-occur identically at all sites. These warnings can be ignored.

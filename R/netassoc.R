@@ -1,17 +1,12 @@
 # generate null sp x site matrices with same total abundance as observed and species probabilities drawn abundances within the base null matrix
 generate_nul_resample <- function(nul, obs)
 {
-  nul_resample <- nul
+  nul_resample <- matrix(0, nrow=nrow(nul),ncol=ncol(nul),dimnames=dimnames(nul))
   for (i in 1:ncol(nul_resample))
   {
-    # zero out all values
-    nul_resample[,i] <- 0
-    
     # fill in resamples with the same total abundance
-    samples <- sample(as.character(dimnames(nul)[[1]]),size=sum(obs[,i]),replace=TRUE,prob=nul[,i])
-    samples <- factor(samples)
-    abund_simulated <- tabulate(as.numeric(samples))
-    nul_resample[as.character(levels(abund_simulated)),i] <- abund_simulated  	
+    samples <- sample(1:nrow(nul),size=sum(obs[,i]),replace=TRUE,prob=nul[,i])
+    nul_resample[,i] <- tabulate(samples, nbins=nrow(nul))  	
   }	
   
   return(nul_resample)
@@ -66,16 +61,14 @@ makenetwork <- function(obs, nul, whichmethod='pearson', kappa=2, numnulls=1000,
   
   if (verbose==TRUE) { cat('Generating null replicates...') }
   nulls <- vector(mode="list",length=numnulls)
-  for (i in 1:numnulls)
-  {
-    if (verbose==TRUE) { cat(sprintf("nulrep%d ",i)) }
-    nulls[[i]] <- generate_nul_resample(nul, obs)
-  }
+
+  nulls <- replicate(numnulls, {if(verbose==TRUE) {  cat('.') }; return(generate_nul_resample(nul, obs))  })
+  
   if (verbose==TRUE) { cat('...done.\n') }
   
   if (plot==TRUE)
   {
-    plot_netassoc_matrix(nulls[[sample(numnulls, 1)]], colors=colorRampPalette(c('white','black'))(51),onesided=TRUE,main="Example null resample sp x site")
+    plot_netassoc_matrix(nulls[,,1], colors=colorRampPalette(c('white','black'))(51),onesided=TRUE,main="Example null resample sp x site")
   }	
   
   fm_obs <- matrix(NA,nrow=nrow(obs),ncol=nrow(obs))
@@ -108,9 +101,9 @@ makenetwork <- function(obs, nul, whichmethod='pearson', kappa=2, numnulls=1000,
           
           for (k in 1:numnulls)
           {
-            if (verbose==TRUE) { cat(sprintf('nul%d',k)) }
-            veci_nul <- as.numeric(nul[i,])
-            vecj_nul <- as.numeric(nul[j,])
+            if (verbose==TRUE) { cat('.') }
+            veci_nul <- as.numeric(nulls[i,,k])
+            vecj_nul <- as.numeric(nulls[j,,k])
             cor_nul[k] <- cor(x=veci_nul, y=vecj_nul, method=whichmethod)
             if (verbose==TRUE) { cat('. ') }
           }
@@ -126,6 +119,8 @@ makenetwork <- function(obs, nul, whichmethod='pearson', kappa=2, numnulls=1000,
       }
     }
   }
+  # save some memory
+  rm(nulls)
   if (verbose==TRUE) { cat('...done.\n') }
   
   # calculate standard effect size
@@ -158,6 +153,11 @@ makenetwork <- function(obs, nul, whichmethod='pearson', kappa=2, numnulls=1000,
   # convert to network representation
   if (verbose==TRUE) { cat('Building network...') }
   network_all <- graph.adjacency(finalmatrix_trimmed,mode='upper',weighted=T)
+  
+  network_pos <- delete.edges(network_all, E(network_all)[E(network_all)$weight < 0])
+  network_neg <- delete.edges(network_all, E(network_all)[E(network_all)$weight > 0])
+  E(network_neg)$weight <- -1*E(network_neg)$weight
+  
   if (verbose==TRUE) { cat('...done.\n') }
   
   if (plot==TRUE)
@@ -175,13 +175,14 @@ makenetwork <- function(obs, nul, whichmethod='pearson', kappa=2, numnulls=1000,
   return(list(
     matrix_spsite_obs=obs,
     matrix_spsite_null=nul,
-    matrix_spsite_nulls=nulls,
     matrix_spsp_obs=fm_obs,
     matrix_spsp_null_mean=fm_nul_mean,
     matrix_spsp_null_sd=fm_nul_sd,
     matrix_spsp_ses_all=finalmatrix,
     matrix_spsp_ses_thresholded=finalmatrix_trimmed,
-    network_all=network_all
+    network_all=network_all,
+    network_pos=network_pos,
+    network_neg=network_neg
     ))
 
 }
