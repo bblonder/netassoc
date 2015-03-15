@@ -72,11 +72,12 @@ Morueta-Holme, N., Blonder, B., et al. in preparation.
 # generate random data
 set.seed(1)
 nsp <- 10
-nsi <- 5
+nsi <- 50
 m_obs <- floor(matrix(rgamma(nsp*nsi,shape=5),ncol=nsi,nrow=nsp))
-m_nul <- floor(matrix(rexp(nsp*nsi,rate=0.05),ncol=nsi,nrow=nsp))
+m_nul <- floor(matrix(rgamma(nsp*nsi,shape=5),ncol=nsi,nrow=nsp))
+#m_nul <- floor(matrix(rexp(nsp*nsi,rate=0.05),ncol=nsi,nrow=nsp))
 
-n <- makenetwork(m_obs, m_nul, numnulls=50, plot=TRUE)
+n <- makenetwork(m_obs, m_nul, numnulls=200, plot=TRUE)
 
 # extract network
 n$network_all
