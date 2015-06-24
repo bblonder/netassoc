@@ -18,7 +18,7 @@ The resulting network can be analyzed using functions from the \code{igraph} net
 }
 \usage{
 makenetwork(obs, nul, 
-  whichmethod = "pearson", kappa = 2, numnulls = 1000, 
+  whichmethod = "pearson", alpha = 0.05, numnulls = 1000, 
   plot = FALSE, verbose = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -32,8 +32,8 @@ A m x n community matrix describing the abundance of m species at n sites. Repre
   \item{whichmethod}{
 Method used to calculate co-occurrence score between abundance vectors of species across sites. Can be either \code{'pearson'} or \code{'spearman'}, as per arguments in \code{\link{cor}}
 }
-  \item{kappa}{
-Threshold value determining the minimum absolute standardized effect size to be retained in the network. Set to zero to retain all associations.
+  \item{alpha}{
+Analysis-wide Type I error rate. Bonferroni correction for multiple species-species comparisons and a normal distribution cumulative distribution function are used to determine a kappa threshold value determining the minimum absolute standardized effect size to be retained in the network. Set alpha to one to retain all assocations.
 }
   \item{numnulls}{
 Number of resamples of the \code{nul} matrix used to assemble null communities. Larger values produce more accurate results.
@@ -77,7 +77,7 @@ m_obs <- floor(matrix(rgamma(nsp*nsi,shape=5),ncol=nsi,nrow=nsp))
 m_nul <- floor(matrix(rgamma(nsp*nsi,shape=5),ncol=nsi,nrow=nsp))
 #m_nul <- floor(matrix(rexp(nsp*nsi,rate=0.05),ncol=nsi,nrow=nsp))
 
-n <- makenetwork(m_obs, m_nul, numnulls=200, plot=TRUE)
+n <- makenetwork(m_obs, m_nul, numnulls=100, plot=TRUE)
 
 # extract network
 n$network_all
