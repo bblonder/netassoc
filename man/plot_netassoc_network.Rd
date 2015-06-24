@@ -8,7 +8,7 @@ Plots species association network
 Draws a network of species associations. By default edge widths are proportional to association strength and edge color reflects assocation type (blue, positive; red, negative).
 }
 \usage{
-plot_netassoc_network(network, layout = layout.auto(network), 
+plot_netassoc_network(network, layout = layout.fruchterman.reingold(network), 
   vertex.label = V(network)$name, 
   vertex.color = NA, 
   vertex.shape = "none",
