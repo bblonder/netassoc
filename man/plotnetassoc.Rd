@@ -1,5 +1,5 @@
-\name{plot_netassoc_network}
-\alias{plot_netassoc_network}
+\name{plotnetassoc}
+\alias{plotnetassoc}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
 Plots species association network
@@ -8,7 +8,7 @@ Plots species association network
 Draws a network of species associations. By default edge widths are proportional to association strength and edge color reflects assocation type (blue, positive; red, negative).
 }
 \usage{
-plot_netassoc_network(network, layout = layout.fruchterman.reingold(network), 
+plotnetassoc(network, layout = layout.fruchterman.reingold(network), 
   vertex.label = V(network)$name, 
   vertex.color = NA, 
   vertex.shape = "none",
@@ -71,8 +71,8 @@ m_nul <- floor(matrix(rexp(nsp*nsi,rate=0.05),ncol=nsi,nrow=nsp))
 n <- makenetwork(m_obs, m_nul, numnulls=50, plot=TRUE)
 
 # plot
-plot_netassoc_network(n$network_all)
+plotnetassoc(n$network_all)
 
 # plot using circular layout
-plot_netassoc_network(n$network_all, layout=layout.circle(n$network_all))
+plotnetassoc(n$network_all, layout=layout.circle(n$network_all))
 }

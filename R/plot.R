@@ -1,0 +1,104 @@
+
+# plot network
+plotnetassoc <- function(network, layout = layout.fruchterman.reingold(network), 
+                                  vertex.label = V(network)$name, 
+                                  vertex.color = NA, 
+                                  vertex.shape = "none",
+                                  vertex.label.color = "black", 
+                                  vertex.label.family = "sans",
+                                  edge.width = NULL, 
+                                  edge.color = NULL, 
+                                  edge.arrow.size = 0.05, 
+                                  vertex.label.cex = 0.5, 
+                                  ...)
+{    
+  if(is.null(edge.width))
+  {
+    if(length(E(network)$weight)==0)
+    {
+      edge.width=1
+    }
+    else
+    {
+      edge.width=abs(E(network)$weight)
+    }
+  }
+  
+  if(is.null(edge.color))
+  {
+    if(length(E(network)$weight)==0)
+    {
+      edge.color <- 'black'  
+      zlmin <- -1
+      zlmax <- 1
+    }
+    else
+    {
+      edge.color <- ifelse(E(network)$weight > 0, rgb(0,0,1,0.8),rgb(1,0,0,0.8))
+      
+      if (length(E(network)$weight)>0)
+      {
+        zlmax <- max(abs(E(network)$weight),na.rm=T)
+        zlmin = -1*zlmax
+      }
+      else
+      {
+        zlmin <- -1
+        zlmax <- 1
+      }
+    }
+  }
+  
+  plot(network,
+       layout=layout,
+       vertex.label=vertex.label,
+       edge.color=edge.color,
+       edge.width=edge.width,
+       vertex.color=vertex.color,
+       vertex.label.color=vertex.label.color,
+       vertex.shape=vertex.shape,
+       edge.arrow.size=edge.arrow.size,
+       vertex.label.cex=vertex.label.cex,
+       vertex.label.family=vertex.label.family,
+       ...)
+  
+  colors=colorRampPalette(c('red','white','blue'))(51)
+  legend('topleft',adj=c(0,0),legend=format(c(zlmin,zlmin/2+zlmax/2,zlmax),digits=2),fill=c(colors[1],colors[ceiling(length(colors)/2)],colors[length(colors)]),bg='white',cex=0.5)
+}
+
+
+
+
+
+plot_netassoc_matrix <- function(data, colors, ylab='Species',xlab='Site',onesided=FALSE,main="")
+{
+  if (length(na.omit(as.numeric(data))) > 0)
+  {
+    zlmax <- max(abs(as.numeric(data)),na.rm=T)
+    if (is.infinite(zlmax))
+    {
+      zlmax <- 1
+    }
+  }
+  else
+  {
+    zlmax <- 1
+  }
+  if (onesided==TRUE)
+  {
+    zlmin = 0
+  }
+  else
+  {
+    zlmin = -1*zlmax
+  }
+  
+  image(t(data),col=colors,axes=F,zlim=c(zlmin, zlmax),main=main)
+  
+  mtext(side=2,text=ylab,cex=0.5)
+  mtext(side=3,text=xlab,cex=0.5)
+  legend('topleft',adj=c(0,0),legend=format(c(zlmin,zlmin/2+zlmax/2,zlmax),digits=2),fill=c(colors[1],colors[ceiling(length(colors)/2)],colors[length(colors)]),bg='white',cex=0.5)
+  box()
+}
+
+

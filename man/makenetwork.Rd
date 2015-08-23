@@ -5,21 +5,12 @@
 Infer species-association network
 }
 \description{
-Infers a species association network by determining which co-occurrence patterns between species are more or less likely than expected under a null model of community assembly. Steps taken are:
-
-1) obtaining input data and trimming to eliminate species that do not occur in any site
-2) resampling a set of null community matrices from the expectation with the same richness and abundance as the observed community
-3) calculating species co-occurrence scores for each pair of species within the observed matrix and all resampled null matrices
-4) calculating standardized effect sizes for species' co-occurrence scores
-5) thresholding effect sizes to retain only significant associations
-6) converting matrix of scores to association network
-
-The resulting network can be analyzed using functions from the \code{igraph} network package.
+Infers a species association network by determining which co-occurrence patterns between species are more or less likely than expected under a null model of community assembly.   
 }
 \usage{
-makenetwork(obs, nul, 
-  whichmethod = "pearson", alpha = 0.05, numnulls = 1000, 
-  plot = FALSE, verbose = TRUE)
+makenetwork(obs, nul = vegan::permatfull(obs)$perm[[1]], 
+  method = "shrinkage", p.method = "fdr", alpha = 0.5, 
+  numnulls = 1000, plot = TRUE, verbose = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -27,61 +18,70 @@ makenetwork(obs, nul,
 A m x n community matrix describing the abundance of m species at n sites. Represents the observed data.
 }
   \item{nul}{
-A m x n community matrix describing the abundance of m species at n sites. Represents the regional null expectation data.
+A m x n community matrix describing the abundance of m species at n sites. Represents the regional null expectation data. The default value is a resampling of the observed data that preserves row and column sums.
 }
-  \item{whichmethod}{
-Method used to calculate co-occurrence score between abundance vectors of species across sites. Can be either \code{'pearson'} or \code{'spearman'}, as per arguments in \code{\link{cor}}
+  \item{method}{
+The method used to calculate relationships between species. See \code{\link{getpcor}} for options. Defaults to a robust shrinkage estimator for inverse covariance matrices.
+}
+  \item{p.method}{
+The method used to correct p-values for multiple comparisons. See \code{\link{p.adjust}} for options.
 }
   \item{alpha}{
-Analysis-wide Type I error rate. Bonferroni correction for multiple species-species comparisons and a normal distribution cumulative distribution function are used to determine a kappa threshold value determining the minimum absolute standardized effect size to be retained in the network. Set alpha to one to retain all assocations.
+Analysis-wide Type I error rate, controlled via the argument \code{p.method}.
 }
   \item{numnulls}{
 Number of resamples of the \code{nul} matrix used to assemble null communities. Larger values produce more accurate results.
 }
   \item{plot}{
-If \code{TRUE}, plots all intermediate matrices calculated by the algorithm. Can be used to visualize input.
+If \code{TRUE}, plots all intermediate matrices calculated by the algorithm. Can be used to visualize input and output.
 }
   \item{verbose}{
 If \code{TRUE}, prints status updates and progress bars during calculations.
 }
 }
 \details{
-Full explanation of the algorithm is provided in the referenced paper.
+Steps taken are:
+
+1) obtaining input data and trimming to eliminate species that do not occur in any site
+2) resampling a set of null community matrices from the expectation with the same richness and abundance as the observed community
+3) calculating species co-occurrence scores for each pair of species within the observed matrix and all resampled null matrices
+4) calculating standardized effect sizes and p-values for species' co-occurrence scores
+5) thresholding effect sizes to retain only significant associations
+6) converting matrix of scores to association network
+
+The resulting network can be analyzed using functions from the \code{igraph} network package.
+
+This process builds a Gaussian graphical model via estimating an inverse covariance matix (precision matrix, which can be used to calculate partial correlation coefficients) for all species pairs. This graph is then compared to a distribution of null graphs, such that the final output is a graph with edge weights corresponding to standardized effect sizes after correction for multiple comparisons. 
+
+A range of different methods are provided in \code{getpcor} for estimating relationships between species. Note that while a method is provided for the graphical lasso (L1-regularization) its use is not recommended, as it will produce very sparse null networks and then a narrow (or singular) distribution of null edge weights.
 }
 \value{
 A list with the following components:
-\item{\code{matrix_spsite_obs}}{The trimmed \code{obs} matrix}
-\item{\code{matrix_spsite_null}}{The trimmed \code{nul} matrix}
-\item{\code{matrix_spsp_obs}}{The observed co-occurrence scores between species}
-\item{\code{matrix_spsp_null_mean}}{The mean null co-occurrence scores between species}
-\item{\code{matrix_spsp_null_sd}}{The s.d. null co-occurrence scores between species}
-\item{\code{matrix_spsp_ses_all}}{The raw standardized effect size co-occurrence scores between species}
-\item{\code{matrix_spsp_ses_thresholded}}{The thresholded standardized effect size co-occurrence scores between species}
+\item{\code{matrix_spsite_obs}}{Trimmed \code{obs} matrix}
+\item{\code{matrix_spsite_nul}}{Trimmed \code{nul} matrix}
+\item{\code{matrix_spsp_obs}}{Observed co-occurrence scores for all species}
+\item{\code{matrix_spsp_ses_thresholded}}{Observed co-occurrence scores for all species after removing those with non-significant p-values}
+\item{\code{matrix_spsp_pvalue}}{P-values for all species after correction for multiple comparisons}
 \item{\code{network_all}}{An \code{igraph} object representing the association network}
 \item{\code{network_pos}}{An \code{igraph} object representing an association network including only positive associations}
 \item{\code{network_pos}}{An \code{igraph} object representing an association network including only negative associations}
 }
-\note{
-Warnings may be generated when calculating co-occurrence scores using the \code{cor} function in cases where a pair of species co-occur identically at all sites. These warnings can be ignored.
-}
 \references{
 Morueta-Holme, N., Blonder, B., et al. in preparation.
 }
+\seealso{vegan::permat}
 
 \examples{
-# generate random data
 set.seed(1)
 nsp <- 10
 nsi <- 50
-m_obs <- floor(matrix(rgamma(nsp*nsi,shape=5),ncol=nsi,nrow=nsp))
-m_nul <- floor(matrix(rgamma(nsp*nsi,shape=5),ncol=nsi,nrow=nsp))
-#m_nul <- floor(matrix(rexp(nsp*nsi,rate=0.05),ncol=nsi,nrow=nsp))
+m_obs <- floor(matrix(rpois(nsp*nsi,lambda=5),ncol=nsi,nrow=nsp))
+m_nul <- floor(matrix(rpois(nsp*nsi,lambda=5),ncol=nsi,nrow=nsp))
 
-n <- makenetwork(m_obs, m_nul, numnulls=100, plot=TRUE)
+m_obs[1,1:(nsi/2)] <- rpois(n=nsi/2,lambda=20)
+m_obs[2,1:(nsi/2)] <- rpois(n=nsi/2,lambda=20)
 
-# extract network
+n <- makenetwork(m_obs, method="shrinkage",p.method='fdr', numnulls=100, plot=TRUE,alpha=0.05)
+
 n$network_all
-
-# example statistics
-degree(n$network_all)
 }
