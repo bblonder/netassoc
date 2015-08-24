@@ -1,25 +1,24 @@
-partial_correlation <- function(mat, method)
+partial_correlation <- function(mat, method, verbose=FALSE)
 { 
-
   # calculate inverse covariance matrix
   if (method=="glasso")
   {
-    invcov <- as.matrix(huge::huge.select(huge(t(mat),method="glasso"),criterion="ebic")$opt.icov)
+    invcov <- as.matrix(huge::huge.select(huge(t(mat),method="glasso",verbose=verbose),criterion="ebic",verbose=verbose)$opt.icov)
   }
   else if (method=="shrinkage")
   {
     # use auto-selected lambda shrinkage parameter
-    invcov <- corpcor::invcov.shrink(t(mat))
+    invcov <- corpcor::invcov.shrink(t(mat), verbose=verbose)
   }
   else if (method=="ridge")
   {
     # use auto-selected lambda penalty parameter based on approximate leave one out cross validation
-    invcov <- rags2ridges::optPenalty.aLOOCV(t(mat), lambdaMin=1e-3,lambdaMax=1e4,step=100,graph=FALSE,verbose=FALSE)$optPrec
+    invcov <- rags2ridges::optPenalty.aLOOCV(t(mat), lambdaMin=1e-3,lambdaMax=1e4,step=100,graph=FALSE,verbose=verbose)$optPrec
   }
   else if (method=="exact")
   {
     # estimate inverse covariance from 
-    cat('Calculating exact inverse covariance...\n')
+    if (verbose==TRUE) {cat('Calculating exact inverse covariance...\n')}
     invcov <- solve(cov(t(mat)))
   }
   
@@ -30,6 +29,7 @@ partial_correlation <- function(mat, method)
   }
   else
   {
+    if (verbose==TRUE) {cat('Calculating correlations...\n')}
     pcor <- cor(t(mat))
   }
   pcor[lower.tri(pcor,diag=TRUE)] <- NA

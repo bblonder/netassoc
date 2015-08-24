@@ -48,7 +48,7 @@ make_netassoc_network <- function(obs, nul=vegan::permatfull(obs)$perm[[1]], met
   
   
   if (verbose==TRUE) { cat('Calculating observed co-occurrence scores...\n') }
-  pcor_obs <- partial_correlation(obs, method)
+  pcor_obs <- partial_correlation(obs, method, verbose=FALSE)
   
   if (plot==TRUE)
   {
@@ -66,12 +66,20 @@ make_netassoc_network <- function(obs, nul=vegan::permatfull(obs)$perm[[1]], met
   {
     # Generating null
     if (verbose==TRUE) { cat(sprintf('Generating null replicate %d...\n', k)) }
+    else
+    {
+      cat(".")
+    }
     
     nul_resampled <- generate_nul_resample(nul, obs)
     
-    pcor_nul <- partial_correlation(nul_resampled, method)
+    pcor_nul <- partial_correlation(nul_resampled, method, verbose=FALSE)
     
     pcor_nul_all[,,k] <- pcor_nul
+  }
+  if (verbose==FALSE)
+  {
+    cat("\n")
   }
   
   # calculate how often obs values are less than nul
