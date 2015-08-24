@@ -2,7 +2,7 @@ Package: netassoc
 Type: Package
 Title: Inference of Species Associations from Co-Occurrence Data
 Version: 0.5.0
-Date: 2015-08-21
+Date: 2015-08-24
 Author: Benjamin Blonder, Naia Morueta-Holme
 Maintainer: Benjamin Blonder <bblonder@gmail.com>
 Description: Infers species associations from community matrices. Uses local and (optional) regional-scale co-occurrence data by comparing observed partial correlation coefficients between species to those estimated from regional species distributions. Extends Gaussian graphical models to a null modeling framework. Provides interface to a variety of inverse covariance matrix estimation methods. 

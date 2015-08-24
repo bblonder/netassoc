@@ -69,7 +69,6 @@ plot_netassoc_network <- function(network, layout = layout.fruchterman.reingold(
 
 
 
-
 plot_netassoc_matrix <- function(data, colors, onesided=FALSE, main="", legend=TRUE, axis=TRUE, cex.axis=0.5)
 {
   if (length(na.omit(as.numeric(data))) > 0)
@@ -105,6 +104,7 @@ plot_netassoc_matrix <- function(data, colors, onesided=FALSE, main="", legend=T
   {
     legend('topleft',adj=c(0,0),legend=format(c(zlmin,zlmin/2+zlmax/2,zlmax),digits=2),fill=c(colors[1],colors[ceiling(length(colors)/2)],colors[length(colors)]),bg='white',cex=0.6)
   }
+  
   box()
 }
 
