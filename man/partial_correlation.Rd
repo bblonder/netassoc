@@ -12,7 +12,7 @@ Assumes that matrix rows correspond to different variables of interest.
 The one exception is if \code{method="correlation"}; see below for details. 
 }
 \usage{
-partial_correlation(mat, method)
+partial_correlation(mat, method, verbose=FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -29,6 +29,9 @@ One of the following
 \item{"exact"}{ - Directly calculates inverse covariance matrix. Results may be sensitive to highly collinear inputs. Use not recommended. Uses \code{solve}.}
 \item{"correlation"}{ - Directly calculates correlation matrix. Does not return partial correlation coefficients as in all other cases. Use not recommended. Uses \code{cor}.}
 }
+}
+  \item{verbose}{
+Binary flag determining whether diagnostic output is shown.
 }
 }
 

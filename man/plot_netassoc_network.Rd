@@ -18,6 +18,7 @@ plot_netassoc_network(network, layout = layout.fruchterman.reingold(network),
   edge.color = NULL, 
   edge.arrow.size = 0.05, 
   vertex.label.cex = 0.5, 
+  legend = TRUE,
    ...)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -54,6 +55,9 @@ Vertex label expansion factor for species.
 }
   \item{vertex.label.family}{
 Vertex shape font family for species.
+}
+  \item{legend}{
+If \code{TRUE}, plots a scale legend.
 }
   \item{\dots}{
 Other arguments to be passed to \code{\link{plot.igraph}}.

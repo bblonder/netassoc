@@ -9,8 +9,8 @@ Plots species x species or species x site matrix with color map
 }
 \usage{
 plot_netassoc_matrix(data, 
-  colors, onesided = FALSE, 
-  main = "", legend = TRUE, axis = TRUE, cex.axis = 0.5)
+  colors, onesided=FALSE, main="", 
+  legend=TRUE, axis=TRUE, title=TRUE, cex.axis=0.5)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -32,6 +32,10 @@ If \code{TRUE}, plots a colorbar legend.
   \item{axis}{
 If \code{TRUE}, labels axes with dimension names.
 }
+  \item{title}{
+If \code{TRUE}, plots a title.
+}
+
   \item{cex.axis}{
 Expansion factor for axis labels.
 }

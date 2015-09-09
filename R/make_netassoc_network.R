@@ -1,4 +1,4 @@
-make_netassoc_network <- function(obs, nul=vegan::permatfull(obs)$perm[[1]], method="shrinkage", p.method="fdr", alpha=0.05, numnulls=1000, plot=TRUE,verbose=TRUE)
+make_netassoc_network <- function(obs, nul=vegan::permatfull(obs)$perm[[1]], method="shrinkage", p.method="fdr", alpha=0.05, numnulls=1000, plot=TRUE,plot.legend=TRUE, plot.title=TRUE, verbose=TRUE)
 {	
   if (is.matrix(obs) & is.null(dimnames(obs)))
   {
@@ -30,29 +30,19 @@ make_netassoc_network <- function(obs, nul=vegan::permatfull(obs)$perm[[1]], met
   }
   
   nsp <- nrow(obs)
-
-  if (plot==TRUE)
-  {
-    par(mfcol=c(2,4)) 
-    par(cex.lab=0.5)
-    par(cex.main=0.6)
-    par(mar=c(4,4,2,0.5))
-  }
   
   if (plot==TRUE)
   {
-    plot_netassoc_matrix(obs, colors=colorRampPalette(c('white','green'))(51),onesided=TRUE,main="Observed sp x site")
-    plot_netassoc_matrix(nul, colors=colorRampPalette(c('white','black'))(51),onesided=TRUE,main="Null sp x site")
+    plot_netassoc_matrix(obs, colors=colorRampPalette(c('white','green'))(51),onesided=TRUE,main="Observed sp x site",legend=plot.legend,title=plot.title)
+    plot_netassoc_matrix(nul, colors=colorRampPalette(c('white','black'))(51),onesided=TRUE,main="Null sp x site",legend=plot.legend,title=plot.title)
    }
-  
-  
   
   if (verbose==TRUE) { cat('Calculating observed co-occurrence scores...\n') }
   pcor_obs <- partial_correlation(obs, method, verbose=FALSE)
   
   if (plot==TRUE)
   {
-     plot_netassoc_matrix(pcor_obs, colors=colorRampPalette(c('red','white','blue'))(51),onesided=FALSE,main="Obs sp x sp")
+     plot_netassoc_matrix(pcor_obs, colors=colorRampPalette(c('red','white','blue'))(51),onesided=FALSE,main="Obs sp x sp",legend=plot.legend,title=plot.title)
   }
 
   # create null distributions
@@ -92,7 +82,7 @@ make_netassoc_network <- function(obs, nul=vegan::permatfull(obs)$perm[[1]], met
   
   if (plot==TRUE)
   {
-    plot_netassoc_matrix(pcor_nul_mean, colors=colorRampPalette(c('red','white','blue'))(51),onesided=FALSE,main="Nul mean sp x sp")
+    plot_netassoc_matrix(pcor_nul_mean, colors=colorRampPalette(c('red','white','blue'))(51),onesided=FALSE,main="Nul mean sp x sp",legend=plot.legend,title=plot.title)
   }
   
   
@@ -121,9 +111,9 @@ make_netassoc_network <- function(obs, nul=vegan::permatfull(obs)$perm[[1]], met
   
   if (plot==TRUE)
   {
-    plot_netassoc_matrix(pcor_pvalues_adjusted, gray(1-1/1:100),main="P-values (corrected)",onesided=TRUE)
-    plot_netassoc_matrix(pcor_ses, colorRampPalette(c('red','white','blue'))(51),main="S.E.S. co-occurrence score for sp x sp (raw)")    
-    plot_netassoc_matrix(pcor_ses_trimmed,colorRampPalette(c('red','white','blue'))(51),main="S.E.S. co-occurrence score for sp x sp (trimmed)")
+    plot_netassoc_matrix(pcor_pvalues_adjusted, gray(1-1/1:100),main="P-values (corrected)",onesided=TRUE,legend=plot.legend,title=plot.title)
+    plot_netassoc_matrix(pcor_ses, colorRampPalette(c('red','white','blue'))(51),main="S.E.S. co-occurrence score for sp x sp (raw)",legend=plot.legend,title=plot.title)    
+    plot_netassoc_matrix(pcor_ses_trimmed,colorRampPalette(c('red','white','blue'))(51),main="S.E.S. co-occurrence score for sp x sp (trimmed)",legend=plot.legend,title=plot.title)
   }
 
   
@@ -143,14 +133,12 @@ make_netassoc_network <- function(obs, nul=vegan::permatfull(obs)$perm[[1]], met
 
   if (plot==TRUE)
   {
-    plot_netassoc_network(network_all)
+    plot_netassoc_network(network_all,legend=plot.legend)
     box()
-    title('Association network')
-  }
-  
-  if (plot==TRUE)
-  {
-    par(mfrow=c(1,1))
+    if (plot.title==TRUE)
+    {
+      title('Association network')
+    }
   }
   
 

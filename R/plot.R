@@ -10,6 +10,7 @@ plot_netassoc_network <- function(network, layout = layout.fruchterman.reingold(
                                   edge.color = NULL, 
                                   edge.arrow.size = 0.05, 
                                   vertex.label.cex = 0.5, 
+                                  legend=TRUE,
                                   ...)
 {    
   if(is.null(edge.width))
@@ -63,14 +64,21 @@ plot_netassoc_network <- function(network, layout = layout.fruchterman.reingold(
        ...)
   
   colors=colorRampPalette(c('red','white','blue'))(51)
-  legend('topleft',adj=c(0,0),legend=format(c(zlmin,zlmin/2+zlmax/2,zlmax),digits=2),fill=c(colors[1],colors[ceiling(length(colors)/2)],colors[length(colors)]),bg='white',cex=0.5)
+  
+  print(legend)
+  
+  if (legend==TRUE)
+  {
+    legend('topleft',adj=c(0,0),legend=format(c(zlmin,zlmin/2+zlmax/2,zlmax),digits=2),fill=c(colors[1],colors[ceiling(length(colors)/2)],colors[length(colors)]),bg='white',cex=0.5)
+  }
 }
 
 
 
 
-plot_netassoc_matrix <- function(data, colors, onesided=FALSE, main="", legend=TRUE, axis=TRUE, cex.axis=0.5)
+plot_netassoc_matrix <- function(data, colors, onesided=FALSE, main="", legend=TRUE, axis=TRUE, title=TRUE, cex.axis=0.5)
 {
+  
   if (length(na.omit(as.numeric(data))) > 0)
   {
     zlmax <- max(abs(as.numeric(data)),na.rm=T)
@@ -92,7 +100,7 @@ plot_netassoc_matrix <- function(data, colors, onesided=FALSE, main="", legend=T
     zlmin = -1*zlmax
   }
   
-  image(t(data),col=colors,axes=F,zlim=c(zlmin, zlmax),main=main)
+  image(t(data),col=colors,axes=F,zlim=c(zlmin, zlmax),main=ifelse(title==TRUE,main,""))
   
   if (axis==TRUE)
   {

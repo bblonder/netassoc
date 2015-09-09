@@ -9,8 +9,8 @@ Infers a species association network by determining which co-occurrence patterns
 }
 \usage{
 make_netassoc_network(obs, nul = vegan::permatfull(obs)$perm[[1]], 
-  method = "shrinkage", p.method = "fdr", alpha = 0.05, 
-  numnulls = 1000, plot = TRUE, verbose = TRUE)
+  method="shrinkage", p.method="fdr", alpha=0.05, numnulls=1000, 
+  plot=TRUE,plot.legend=TRUE, plot.title=TRUE, verbose=TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -35,6 +35,12 @@ Number of resamples of the \code{nul} matrix used to assemble null communities. 
   \item{plot}{
 If \code{TRUE}, plots all intermediate matrices calculated by the algorithm. Can be used to visualize input and output.
 }
+  \item{plot.title}{
+If \code{TRUE}, adds titles to diagnostic plots.
+}
+  \item{plot.legend}{
+If \code{TRUE}, adds legends to diagnostic plots.
+}
   \item{verbose}{
 If \code{TRUE}, prints status updates and progress bars during calculations.
 }
@@ -51,7 +57,7 @@ Steps taken are:
 
 The resulting network can be analyzed using functions from the \code{igraph} network package.
 
-This process builds a Gaussian graphical model via estimating an inverse covariance matix (precision matrix, which can be used to calculate partial correlation coefficients) for all species pairs. This graph is then compared to a distribution of null graphs, such that the final output is a graph with edge weights corresponding to standardized effect sizes after correction for multiple comparisons. 
+This process builds a Gaussian graphical model via estimating an inverse covariance matrix (precision matrix, which can be used to calculate partial correlation coefficients) for all species pairs. This graph is then compared to a distribution of null graphs, such that the final output is a graph with edge weights corresponding to standardized effect sizes after correction for multiple comparisons. 
 
 A range of different methods are provided in \code{\link{partial_correlation}} for estimating relationships between species. Note that while a method is provided for the graphical lasso (L1-regularization) its use is not recommended, as it will produce very sparse null networks and then a narrow (or singular) distribution of null edge weights.
 }
@@ -81,7 +87,7 @@ m_nul <- floor(matrix(rpois(nsp*nsi,lambda=5),ncol=nsi,nrow=nsp))
 m_obs[1,1:(nsi/2)] <- rpois(n=nsi/2,lambda=20)
 m_obs[2,1:(nsi/2)] <- rpois(n=nsi/2,lambda=20)
 
-n <- make_netassoc_network(m_obs, 
+n <- make_netassoc_network(m_obs, m_nul,
   method="shrinkage",p.method='fdr', 
   numnulls=100, plot=TRUE,alpha=0.05)
 
