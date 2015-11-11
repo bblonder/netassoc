@@ -88,19 +88,15 @@ make_netassoc_network <- function(obs, nul=vegan::permatfull(obs)$perm[[1]], met
     
   }
   
-  
-  
-
-  
   pcor_ses <- (pcor_obs - pcor_nul_mean) / pcor_nul_sd
   
   pcor_pvalues <- apply(absobs_minus_absnul, c(1,2), function(x) { mean(x<0) })
-
+  diag(pcor_pvalues) <- NA
+  
   # control false discovery rate
   if (verbose==TRUE) { cat('Adjusting p-values for multiple comparisons... ') }
-  ntests <- length(which(!is.na(pcor_pvalues)))
-  cat(sprintf('ntests=%d\n',ntests))
-  pcor_pvalues_adjusted <- matrix(p.adjust(pcor_pvalues, method=p.method, n=ntests),nrow=nsp,ncol=nsp)
+
+  pcor_pvalues_adjusted <- matrix(p.adjust(pcor_pvalues, method=p.method),nrow=nsp,ncol=nsp)
   dimnames(pcor_pvalues_adjusted) <- dimnames(pcor_obs)
   
   pcor_ses_trimmed <- pcor_ses

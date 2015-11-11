@@ -100,7 +100,7 @@ n <- make_netassoc_network(m_obs, m_nul,
   
 # experimental demonstration of non-symmetric metrics  
 #n <- make_netassoc_network(m_obs, m_nul,
-#  method="pairwise_association",args=list(method="infotheo::condentropy"),
+#  method="pairwise_association",args=list(method="condentropy"),
 #  p.method='fdr', 
 #  numnulls=100, plot=TRUE,alpha=0.05)
 
