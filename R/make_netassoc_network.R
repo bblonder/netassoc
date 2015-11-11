@@ -1,4 +1,4 @@
-make_netassoc_network <- function(obs, nul=vegan::permatfull(obs)$perm[[1]], method="shrinkage", p.method="fdr", alpha=0.05, numnulls=1000, plot=TRUE,plot.legend=TRUE, plot.title=TRUE, verbose=TRUE)
+make_netassoc_network <- function(obs, nul=vegan::permatfull(obs)$perm[[1]], method="partial_correlation", args=list(method="shrinkage",verbose=FALSE), p.method="fdr", alpha=0.05, numnulls=1000, plot=TRUE,plot.legend=TRUE, plot.title=TRUE, verbose=TRUE)
 {	
   if (is.matrix(obs) & is.null(dimnames(obs)))
   {
@@ -38,7 +38,8 @@ make_netassoc_network <- function(obs, nul=vegan::permatfull(obs)$perm[[1]], met
    }
   
   if (verbose==TRUE) { cat('Calculating observed co-occurrence scores...\n') }
-  pcor_obs <- partial_correlation(obs, method, verbose=FALSE)
+  pcor_obs <- do.call(method, args=c(list(mat=obs), args))
+  #pcor_obs <- partial_correlation(obs, method, verbose=FALSE)
   
   if (plot==TRUE)
   {
@@ -48,10 +49,6 @@ make_netassoc_network <- function(obs, nul=vegan::permatfull(obs)$perm[[1]], met
   # create null distributions
   pcor_nul_all <- array(dim=c(nsp, nsp, numnulls))
   
-  if (method=="glasso")
-  {
-    warning("Graphical lasso may not produce non-singular null distribution - SES and p-values may be unreasonable.\nProceed with caution.")
-  }
   for (k in 1:numnulls)
   {
     # Generating null
@@ -63,7 +60,8 @@ make_netassoc_network <- function(obs, nul=vegan::permatfull(obs)$perm[[1]], met
     
     nul_resampled <- generate_nul_resample(nul, obs)
     
-    pcor_nul <- partial_correlation(nul_resampled, method, verbose=FALSE)
+    #pcor_nul <- partial_correlation(nul_resampled, method, verbose=FALSE)
+    pcor_nul <- do.call(method, args=c(list(mat=nul_resampled), args))
     
     pcor_nul_all[,,k] <- pcor_nul
   }
@@ -80,23 +78,29 @@ make_netassoc_network <- function(obs, nul=vegan::permatfull(obs)$perm[[1]], met
   pcor_nul_mean <- apply(pcor_nul_all, c(1,2), mean)
   dimnames(pcor_nul_mean) <- dimnames(pcor_obs)
   
+  pcor_nul_sd <- apply(pcor_nul_all, c(1,2), sd)
+  dimnames(pcor_nul_sd) <- dimnames(pcor_obs)
+  
   if (plot==TRUE)
   {
     plot_netassoc_matrix(pcor_nul_mean, colors=colorRampPalette(c('red','white','blue'))(51),onesided=FALSE,main="Nul mean sp x sp",legend=plot.legend,title=plot.title)
+    plot_netassoc_matrix(pcor_nul_sd, colors=colorRampPalette(c('white','gray'))(51),onesided=TRUE,main="Nul sd sp x sp",legend=plot.legend,title=plot.title)
+    
   }
   
   
   
-  pcor_nul_sd <- apply(pcor_nul_all, c(1,2), sd)
+
   
   pcor_ses <- (pcor_obs - pcor_nul_mean) / pcor_nul_sd
   
   pcor_pvalues <- apply(absobs_minus_absnul, c(1,2), function(x) { mean(x<0) })
-  
-  
+
   # control false discovery rate
-  if (verbose==TRUE) { cat('Adjusting p-values for multiple comparisons...\n') }
-  pcor_pvalues_adjusted <- matrix(p.adjust(pcor_pvalues, method=p.method, n=((nsp)*(nsp-1)/2)),nrow=nsp,ncol=nsp)
+  if (verbose==TRUE) { cat('Adjusting p-values for multiple comparisons... ') }
+  ntests <- length(which(!is.na(pcor_pvalues)))
+  cat(sprintf('ntests=%d\n',ntests))
+  pcor_pvalues_adjusted <- matrix(p.adjust(pcor_pvalues, method=p.method, n=ntests),nrow=nsp,ncol=nsp)
   dimnames(pcor_pvalues_adjusted) <- dimnames(pcor_obs)
   
   pcor_ses_trimmed <- pcor_ses
@@ -127,9 +131,9 @@ make_netassoc_network <- function(obs, nul=vegan::permatfull(obs)$perm[[1]], met
   pcor_ses_trimmed_neg_net <- pcor_ses_trimmed_neg
   pcor_ses_trimmed_neg_net[is.na(pcor_ses_trimmed_neg_net)] <- 0
   
-  network_all <- graph.adjacency(pcor_ses_trimmed_net,mode='upper',weighted=T)
-  network_pos <- graph.adjacency(pcor_ses_trimmed_pos_net,mode='upper',weighted=T)
-  network_neg <- graph.adjacency(pcor_ses_trimmed_neg_net,mode='upper',weighted=T)
+  network_all <- graph.adjacency(pcor_ses_trimmed_net,mode='directed',weighted=T)
+  network_pos <- graph.adjacency(pcor_ses_trimmed_pos_net,mode='directed',weighted=T)
+  network_neg <- graph.adjacency(pcor_ses_trimmed_neg_net,mode='directed',weighted=T)
 
   if (plot==TRUE)
   {

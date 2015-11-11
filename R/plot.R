@@ -65,8 +65,6 @@ plot_netassoc_network <- function(network, layout = layout.fruchterman.reingold(
   
   colors=colorRampPalette(c('red','white','blue'))(51)
   
-  print(legend)
-  
   if (legend==TRUE)
   {
     legend('topleft',adj=c(0,0),legend=format(c(zlmin,zlmin/2+zlmax/2,zlmax),digits=2),fill=c(colors[1],colors[ceiling(length(colors)/2)],colors[length(colors)]),bg='white',cex=0.5)

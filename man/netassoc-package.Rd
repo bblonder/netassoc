@@ -14,6 +14,6 @@ Benjamin Blonder, Naia Morueta-Holme
 Maintainer: Benjamin Blonder <bblonder@gmail.com>
 }
 \references{
-Morueta-Holme, N., Blonder, B., et al. IN PREPARATION.
+Morueta-Holme, N., Blonder, B., et al. A network approach for inferring species associations from co-occurrence data. Ecography, 2016.
 }
 \keyword{ package }

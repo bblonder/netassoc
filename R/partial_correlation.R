@@ -13,7 +13,7 @@ partial_correlation <- function(mat, method, verbose=FALSE)
   else if (method=="ridge")
   {
     # use auto-selected lambda penalty parameter based on approximate leave one out cross validation
-    invcov <- rags2ridges::optPenalty.aLOOCV(t(mat), lambdaMin=1e-3,lambdaMax=1e4,step=100,graph=FALSE,verbose=verbose)$optPrec
+    invcov <- rags2ridges::optPenalty.LOOCVauto(t(mat), lambdaMin=1e-3,lambdaMax=1e4)$optPrec
   }
   else if (method=="exact")
   {
@@ -32,7 +32,6 @@ partial_correlation <- function(mat, method, verbose=FALSE)
     if (verbose==TRUE) {cat('Calculating correlations...\n')}
     pcor <- cor(t(mat))
   }
-  pcor[lower.tri(pcor,diag=TRUE)] <- NA
   
   return(pcor)
 }
