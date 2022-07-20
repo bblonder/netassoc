@@ -10,11 +10,6 @@ partial_correlation <- function(mat, method, verbose=FALSE)
     # use auto-selected lambda shrinkage parameter
     invcov <- corpcor::invcov.shrink(t(mat), verbose=verbose)
   }
-  else if (method=="ridge")
-  {
-    # use auto-selected lambda penalty parameter based on approximate leave one out cross validation
-    invcov <- rags2ridges::optPenalty.LOOCVauto(t(mat), lambdaMin=1e-3,lambdaMax=1e4)$optPrec
-  }
   else if (method=="exact")
   {
     # estimate inverse covariance from 
@@ -35,3 +30,9 @@ partial_correlation <- function(mat, method, verbose=FALSE)
   
   return(pcor)
 }
+
+#else if (method=="ridge")
+#{
+#  # use auto-selected lambda penalty parameter based on approximate leave one out cross validation
+#  invcov <- rags2ridges::optPenalty.LOOCVauto(t(mat), lambdaMin=1e-3,lambdaMax=1e4)$optPrec
+#}

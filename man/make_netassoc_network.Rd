@@ -16,13 +16,13 @@ make_netassoc_network(obs, nul=vegan::permatfull(obs)$perm[[1]],
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{obs}{
-A m x n community matrix describing the abundance of m species at n sites. Represents the observed data.
+A m x n community matrix describing the abundance or presence/absence of m species at n sites. Represents the observed data.
 }
   \item{nul}{
-A m x n community matrix describing the abundance of m species at n sites. Represents the regional null expectation data. The default value is a resampling of the observed data that preserves row and column sums.
+A m x n community matrix describing the abundance or presence/absence of m species at n sites. Represents the regional null expectation data. The default value is a resampling of the observed data that preserves row and column sums, but this default method is not recommended.
 }
   \item{method}{
-The name of a function used to calculate relationships between species. The function must accept at least the arguments \code{mat}, a m x n (species x site) matrix.
+The name of a function used to calculate relationships between species. The function must accept at least the arguments \code{mat}, a m x n (species x site) matrix. Defaults to \code{\link{partial_correlation}}.
 }
   \item{args}{
 A list of additional arguments to be passed to the \code{method} function.
@@ -61,6 +61,8 @@ Steps taken are:
 
 The resulting network can be analyzed using functions from the \code{igraph} network package.
 
+The user should specify a \code{nul} matrix of the same dimensionality as \code{obs} based on some regional distribution modeling approach (e.g. MaxEnt). The default reshuffling method is not recommended but provided to allow immediate output from the function.
+
 This process by default builds a Gaussian graphical model via estimating an inverse covariance matrix (precision matrix, which can be used to calculate partial correlation coefficients) for all species pairs. This graph is then compared to a distribution of null graphs, such that the final output is a graph with edge weights corresponding to standardized effect sizes after correction for multiple comparisons. 
 
 A range of different methods are provided in \code{\link{partial_correlation}} for estimating relationships between species. Note that while a method is provided for the graphical lasso (L1-regularization) its use is not recommended, as it will produce very sparse null networks and then a narrow (or singular) distribution of null edge weights.
@@ -77,9 +79,6 @@ A list with the following components:
 \item{\code{network_all}}{An \code{igraph} object representing the association network}
 \item{\code{network_pos}}{An \code{igraph} object representing an association network including only positive associations}
 \item{\code{network_pos}}{An \code{igraph} object representing an association network including only negative associations}
-}
-\references{
-Morueta-Holme, N., Blonder, B., et al. in preparation.
 }
 \seealso{vegan::permat}
 

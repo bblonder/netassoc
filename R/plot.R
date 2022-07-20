@@ -1,6 +1,6 @@
 
 # plot network
-plot_netassoc_network <- function(network, layout = layout.fruchterman.reingold(network), 
+plot_netassoc_network <- function(network, layout = layout_nicely(network), 
                                   vertex.label = V(network)$name, 
                                   vertex.color = NA, 
                                   vertex.shape = "none",
@@ -8,7 +8,7 @@ plot_netassoc_network <- function(network, layout = layout.fruchterman.reingold(
                                   vertex.label.family = "sans",
                                   edge.width = NULL, 
                                   edge.color = NULL, 
-                                  edge.arrow.size = 0.05, 
+                                  edge.arrow.size = 0.2, 
                                   vertex.label.cex = 0.5, 
                                   legend=TRUE,
                                   ...)
@@ -35,7 +35,7 @@ plot_netassoc_network <- function(network, layout = layout.fruchterman.reingold(
     }
     else
     {
-      edge.color <- ifelse(E(network)$weight > 0, rgb(0,0,1,0.8),rgb(1,0,0,0.8))
+      edge.color <- ifelse(E(network)$weight > 0, rgb(0,0,1),rgb(1,0,0))
       
       if (length(E(network)$weight)>0)
       {

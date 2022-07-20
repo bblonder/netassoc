@@ -1,6 +1,6 @@
 export(plot_netassoc_network, make_netassoc_network, partial_correlation, plot_netassoc_matrix, pairwise_association)
 import(igraph)
-importFrom(rags2ridges, optPenalty.LOOCVauto)
+#importFrom(rags2ridges, optPenalty.LOOCVauto)
 importFrom(corpcor, decompose.invcov)
 importFrom(corpcor, invcov.shrink)
 importFrom(vegan, permatfull)

@@ -3,7 +3,7 @@
 \alias{netassoc}
 \docType{package}
 \title{
-Inference of Species Assocations from Co-Occurrence Data
+Inference of Species Associations from Co-Occurrence Data
 }
 \description{
 Infers species associations from community matrices. Uses local and (optional) regional-scale co-occurrence data by comparing observed partial correlation coefficients between species to those estimated from regional species distributions. Extends Gaussian graphical models to a null modeling framework. Provides interface to a variety of inverse covariance matrix estimation methods.
@@ -14,6 +14,6 @@ Benjamin Blonder, Naia Morueta-Holme
 Maintainer: Benjamin Blonder <bblonder@gmail.com>
 }
 \references{
-Morueta-Holme, N., Blonder, B., et al. A network approach for inferring species associations from co-occurrence data. Ecography, 2016.
+Morueta-Holme, N., Blonder, B., et al. A network approach for inferring species associations from co-occurrence data. (in review)
 }
 \keyword{ package }

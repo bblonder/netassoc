@@ -24,7 +24,6 @@ Input matrix.
   \itemize{
 One of the following
 \item{"glasso"}{ - L1-regularized estimation via graphical lasso. The analysis is run for a range of penalty parameters; then a single inverse covariance matrix is returned whose penalty parameter yields the with the best Extended Bayesian Information Criterion value. Uses \code{huge::huge} and \code{huge::huge.select}.}
-\item{"ridge"}{ - L2-regularized estimation via ridge regression. The analysis is run for a range of penalty parameters; then a single inverse covariance matrix is returned whose penalty parameter is optimal according to approximate leave-one-out cross validation. Uses \code{rags2ridges::ridgeS} and \code{rags2ridges::optPenalty.aLOOCV}.}
 \item{"shrinkage"}{ - Shrinkage estimate. The shrinkage parameter is estimated via an analytic formula. Uses \code{corpcor::invcov.shrink}.}
 \item{"exact"}{ - Directly calculates inverse covariance matrix. Results may be sensitive to highly collinear inputs. Use not recommended. Uses \code{solve}.}
 \item{"correlation"}{ - Directly calculates correlation matrix. Does not return partial correlation coefficients as in all other cases. Use not recommended. Uses \code{cor}.}
@@ -44,9 +43,7 @@ data(longley)
 longley_ss <- t(longley[,c(1:5,7)]) # put data in correct input format
 
 colors <- colorRampPalette(c("red","white","blue"))(10)
-pc_ridge <- partial_correlation(longley_ss,method="ridge")
 pc_shrinkage <- partial_correlation(longley_ss,method="shrinkage")
 
 image(pc_shrinkage,zlim=c(-1,1),col=colors)
-image(pc_ridge,zlim=c(-1,1),col=colors)
 }
