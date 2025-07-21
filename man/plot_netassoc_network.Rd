@@ -60,7 +60,7 @@ Vertex shape font family for species.
 If \code{TRUE}, plots a scale legend.
 }
   \item{\dots}{
-Other arguments to be passed to \code{\link{plot.igraph}}.
+Other arguments to be passed to \code{\link[igraph]{plot.igraph}}.
 }
 }
 

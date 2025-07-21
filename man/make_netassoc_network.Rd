@@ -28,7 +28,7 @@ The name of a function used to calculate relationships between species. The func
 A list of additional arguments to be passed to the \code{method} function.
 }
   \item{p.method}{
-The method used to correct p-values for multiple comparisons. See \code{\link{p.adjust}} for options.
+The method used to correct p-values for multiple comparisons. See \code{\link[stats]{p.adjust}} for options.
 }
   \item{alpha}{
 Analysis-wide Type I error rate, controlled via the argument \code{p.method}.
